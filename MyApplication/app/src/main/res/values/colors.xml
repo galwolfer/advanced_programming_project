@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="blue">#0000FF</color>
+    <color name="red">#B60202</color>
+    <color name="light_red">#BF3A3A</color>
+    <color name="like_red">#EA9B9B</color>
+    <color name="error_red">#E41B1B</color>
+
+    <color name="dark_red">#800000</color> <!-- Example dark mode primary color -->
+    <color name="dark_accent">#FFFFFF</color> <!-- Example dark mode accent color -->
+    <color name="dark_background">#303030</color> <!-- Example dark mode background color -->
+    <color name="dark_text_primary">#FFFFFF</color> <!-- Example dark mode primary text color -->
+    <color name="dark_text_secondary">#CCCCCC</color> <!-- Example dark mode secondary text color -->
+
+
+
+</resources>

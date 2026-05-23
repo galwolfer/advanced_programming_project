@@ -1,0 +1,53 @@
+#openMenu {
+  margin-left: 10vh;
+  transition: transform 1s ease;
+}
+
+.left-menu-wrapper {
+  position: relative;
+}
+
+.menuContainer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1s ease, opacity 1s ease;
+  opacity: 0;
+}
+
+.menuContainer.visible {
+  max-height: 1000px; 
+  opacity: 1;
+}
+
+.list-group-item {
+  border: 0 !important;
+  background-color: transparent !important;
+}
+
+.list-group-item:hover {
+  background-color: lightcoral !important;
+  cursor: pointer;
+}
+
+.list-group {
+  margin-top: 0;
+}
+
+.separator {
+  height: 1px;
+  background-color: #ccc; 
+  margin: 10px 0; 
+  list-style: none; 
+}
+
+.subscribtions {
+  font-weight: bold;
+}
+
+.you-more {
+  font-weight: bold;
+}
+
+#listRowDark {
+  color: white;
+}

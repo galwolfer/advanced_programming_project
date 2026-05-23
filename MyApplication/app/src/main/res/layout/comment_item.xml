@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <!-- Profile Picture -->
+    <ImageView
+        android:id="@+id/ivProfileComment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/default_profile_pic" />
+
+    <!-- Display Name -->
+    <TextView
+        android:id="@+id/tvDisplayName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/ivProfileComment"
+        android:layout_toStartOf="@+id/btnDeleteComment"
+        android:layout_marginStart="10dp"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        tools:text="Display Name" />
+
+    <!-- Comment Text -->
+    <TextView
+        android:id="@+id/tvComment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvDisplayName"
+        android:layout_toEndOf="@id/ivProfileComment"
+        android:layout_toStartOf="@+id/btnDeleteComment"
+        android:layout_marginStart="10dp"
+        android:padding="8dp"
+        android:text="@string/sample_comment"
+        android:maxLines="3"
+        android:ellipsize="end"
+        tools:ignore="RelativeOverlap" />
+
+    <!-- Edit Button -->
+    <ImageButton
+        android:id="@+id/btnDeleteComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_delete" />
+
+</RelativeLayout>

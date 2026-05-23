@@ -1,0 +1,53 @@
+.comment-section {
+    margin-top: 2vh;
+}
+
+.new-comment-text {
+    width: 85%;
+}
+
+#post-button {
+    margin-left: 0.5vh;
+}
+
+.comment{
+    padding: 10px; 
+    margin-bottom: 0.5vh;
+    width: 60%;
+}
+
+.author{
+    font-weight: bold;
+}
+
+.author-dark{
+    font-weight: bold;
+    color: white;
+}
+
+.comment-details {
+    display: flex;
+}
+
+.timestamp {
+    font-size: small;
+    margin-left: 1vh;
+}
+
+.timestamp-dark {
+    font-size: small;
+    margin-left: 1vh;
+    color: lightgrey;
+}
+
+.author{
+    margin-left: 0.5vh;
+}
+
+.comment-text-dark{
+    color: white;
+}
+
+#deleteBtn {
+    margin-left: 1vh;
+}

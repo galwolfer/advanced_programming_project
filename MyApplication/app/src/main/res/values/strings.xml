@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Itube</string>
+    <string name="username">Username</string>
+    <string name="Password">Password</string>
+    <string name="verifyPassword">Verify Password</string>
+    <string name="LOGIN">Button</string>
+    <string name="login">LOGIN</string>
+    <string name="iTube">iTube</string>
+    <string name="date">date</string>
+    <string name="sample_video">video page</string>
+    <string name="comment_hint">"   Enter Comment\n"</string>
+    <string name="sample_comment">comment</string>
+    <string name="display_name"></string>
+    <string name="register_sign">REGISTER</string>
+    <string name="displayName">Display Name</string>
+    <string name="picAdd">Add Profile Picture:</string>
+    <string name="invalidPass">Password must be at least 8 characters long, contain both letters and numbers, and at least one capital letter.</string>
+    <string name="verifyPass">Passwords do not match.</string>
+    <string name="fillAll">Fill all fields </string>
+    <string name="addVidTitle">Add a New Video</string>
+    <string name="addDescription">Add description for post</string>
+    <string name="signUp">Sign Up</string>
+    <string name="addVid">Your video</string>
+    <string name="addImage">Your photo thumbnail</string>
+    <string name="add_post">Add Post</string>
+    <string name="go_to_home_page">Go to Home Page</string>
+    <string name="takenUserName">Username already taken</string>
+
+
+</resources>

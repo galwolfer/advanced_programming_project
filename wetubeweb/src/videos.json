@@ -1,0 +1,103 @@
+
+[
+    {
+        "id": "1",
+        "title": "Cute kitten",
+        "uploader" : "Israel Israeli",
+        "views" : "187",
+        "uploaded": "2 days ago",
+        "path": "/ex1videos/video1.mp4",
+        "likes": 198,
+        "thumbnailPath": "/thumbnails/thumbnail1.png"
+    },
+    {
+        "id": "2",
+        "title": "Neon hello",
+        "uploader" : "Johnny depp",
+        "views" : "2229",
+        "uploaded": "5 years ago",
+        "path": "/ex1videos/video2.mp4", 
+        "likes": 344,
+        "thumbnailPath": "/thumbnails/thumbnail2.png"
+    },
+    {
+        "id": "3",
+        "title": "My sheep",
+        "uploader" : "Abraham the shephard",
+        "views" : "150",
+        "uploaded": "3293 years ago", 
+        "path": "/ex1videos/video3.mp4",
+        "likes": 22,
+        "thumbnailPath": "/thumbnails/thumbnail3.png"
+    },
+    {
+        "id": "4",
+        "title": "Yes",
+        "uploader" : "Yes man",
+        "views" : "847",
+        "uploaded": "5 hours ago", 
+        "path": "/ex1videos/video4.mp4",
+        "likes": 74,
+        "thumbnailPath": "/thumbnails/thumbnail4.png"
+    },
+    {
+        "id": "5",
+        "title": "Nice beach",
+        "uploader" : "Weary traveler",
+        "views" : "22K",
+        "uploaded": "3 days ago", 
+        "path": "/ex1videos/video5.mp4" ,
+        "likes": 567,
+        "thumbnailPath": "/thumbnails/thumbnail5.png"
+    },
+    {
+        "id": "6",
+        "title": "Clubbing with friends",
+        "uploader" : "The party man",
+        "views" : "2K",
+        "uploaded": "9 days ago", 
+        "path": "/ex1videos/video6.mp4",
+        "likes": 12,
+        "thumbnailPath": "/thumbnails/thumbnail6.png"
+    },
+    {
+        "id": "7",
+        "title": "Gaming",
+        "uploader" : "Gamer",
+        "views" : "347K",
+        "uploaded": "1 year ago", 
+        "path": "/ex1videos/video7.mp4",
+        "likes": 888,
+        "thumbnailPath": "/thumbnails/thumbnail7.png"
+    },
+    {
+        "id": "8",
+        "title": "Hacking",
+        "uploader" : "Hacker from 8200",
+        "views" : "5500",
+        "uploaded": "3 days ago", 
+        "path": "/ex1videos/video8.mp4",
+        "likes": 122,
+        "thumbnailPath": "/thumbnails/thumbnail8.png"
+    },
+    {
+        "id": "9",
+        "title": "Function",
+        "uploader" : "Albert Einstein",
+        "views" : "550",
+        "uploaded": "3 days ago", 
+        "path": "/ex1videos/video9.mp4",
+        "likes": 126,
+        "thumbnailPath": "/thumbnails/thumbnail9.png"
+    },
+    {
+        "id": "10",
+        "title": "Integral",
+        "uploader" : "Wilhelm Leibniz",
+        "views" : "5.5M",
+        "uploaded": "3 days ago", 
+        "path": "/ex1videos/video10.mp4",
+        "likes": 1288,
+        "thumbnailPath": "/thumbnails/thumbnail10.png"
+    }
+]

@@ -1,0 +1,64 @@
+.App {
+    text-align: center;
+  }
+  
+  .App-header {
+    background-color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .appIcon {
+    width: 120px;
+    height: 120px;
+    margin-left:5px;
+  }
+  
+  .appName {
+    color: red;
+  }
+  
+  .bi-plus-circle {
+    font-size: large;
+  }
+  
+  .bi-bell {
+  font-size: large;
+  }
+  
+  #addBtn {
+    margin-left: 650px;
+    padding: 0% !important;
+    border: 0% !important;
+  }
+  
+  #notifBtn{
+    margin-left: 20px;
+    padding: 0% !important;
+    border: 0% !important;
+  }
+  
+  #addBtn:hover {
+    background-color: aqua;
+  }
+  
+  #notifBtn:hover {
+    background-color:  aqua;
+    ;
+  }
+
+  .video-play video{
+    width: 65%;
+    height: 60vh;
+    margin-top: 2vh;
+}
+
+.video-play{
+    flex-basis: 69%;
+}
+  

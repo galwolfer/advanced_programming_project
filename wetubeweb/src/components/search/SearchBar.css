@@ -1,0 +1,37 @@
+.searchBar {
+  width: 90vh;
+  margin-left: 18vh;
+  margin-bottom: 3vh;
+  border-radius: 25px;
+  border: 1px solid lightgray;
+  background-color: white;
+  padding: 10px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.searchBar:focus {
+  background-color: white;
+  border-color: gray; /* Slight change to border color to indicate focus */
+  outline: none; /* Removes default focus outline */
+}
+
+.searchBar:hover {
+  background-color: white;
+  border-color: gray; /* Slight change to border color to indicate hover */
+}
+
+.searchBar:active {
+  background-color: white;
+  border-color: gray; /* Ensure consistent color when active */
+}
+
+#searchIcon{
+  margin-bottom: 3vh;
+  margin-left: 1vh;
+}
+
+#searchIconDark{
+  margin-bottom: 3vh;
+  margin-left: 1vh;
+  color: white;
+}

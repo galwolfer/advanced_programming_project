@@ -1,0 +1,83 @@
+body {
+  background-color: rgb(240, 240, 240); /* Slightly lighter background color for the entire page */
+  animation: colorChange 6s infinite; /* Apply the color change animation */
+}
+
+.SignUpContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height of the viewport */
+}
+
+.SignUpForm {
+  width: 400px; 
+  padding: 40px;
+  background-color: white; /* Background color for the sign-up box */
+  border: 1px solid #e0e0e0; /* Light border color */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for better appearance */
+  text-align: center; /* Center-align text within the form */
+}
+
+.Logo {
+  width: 200px; /* Adjust the width of the logo */
+  height: auto; /* Maintain aspect ratio */
+  margin-bottom: 10px; /* Space between logo and form */
+}
+
+.SignUpForm h2 {
+  margin-bottom: 20px; /* Add spacing between the heading and the form */
+  font-size: 24px; /* Adjust font size */
+  color: #333; /* Darker color for better readability */
+}
+
+.input-group {
+  margin-bottom: 20px; /* Add spacing between input groups */
+}
+
+.input-group .form-control {
+  width: calc(100% - 2rem); /* Full width minus padding */
+  padding: 10px; /* Increase padding for larger input boxes */
+  font-size: 16px; /* Increase font size */
+  border-radius: 4px; /* Slightly rounded corners */
+  border: 1px solid #ccc; /* Light border color */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.SignUpForm button {
+  width: 100%; /* Make the button fill the width of the form */
+  padding: 10px; /* Increase padding for larger button */
+  font-size: 16px; /* Increase font size */
+  border-radius: 4px; /* Slightly rounded corners */
+  background-color: #ff0000; /* YouTube's red color */
+  color: white; /* White text color */
+  border: none; /* Remove border */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.SignUpForm button:hover {
+  background-color: #e60000; /* Darker red on hover */
+}
+
+.signin-link {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signin-link a {
+  color: #007bff; /* Link color */
+  text-decoration: none; /* Remove underline */
+}
+
+.signin-link a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+.error-outline {
+  outline-color: red;
+}
+
+.error-message {
+  color: red;
+}

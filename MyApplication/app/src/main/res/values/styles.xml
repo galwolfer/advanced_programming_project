@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here -->
+        <item name="colorPrimary">@color/red</item> <!-- App bar color -->
+        <item name="colorPrimaryDark">@color/red</item> <!-- Status bar color -->
+        <item name="colorAccent">@color/black</item> <!-- Accent color -->
+    </style>
+
+    <!-- Dark Mode Theme -->
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/dark_red</item> <!-- Adjust primary color for dark mode -->
+        <item name="colorPrimaryDark">@color/dark_red</item> <!-- Adjust status bar color for dark mode -->
+        <item name="colorAccent">@color/dark_accent</item> <!-- Adjust accent color for dark mode -->
+        <item name="android:windowBackground">@color/dark_background</item> <!-- Background color -->
+        <item name="android:textColorPrimary">@color/dark_text_secondary</item> <!-- Primary text color -->
+        <item name="android:textColorSecondary">@color/dark_text_secondary</item> <!-- Secondary text color -->
+    </style>
+
+    <!-- Define your color resources -->
+</resources>

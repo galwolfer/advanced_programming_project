@@ -1,0 +1,55 @@
+.left-menu {
+    position: relative;
+}
+
+.list-group-item {
+    border: 0 !important;
+    background-color: transparent !important;
+}
+
+.list-group-item:hover {
+    background-color: lightcoral !important;
+    cursor: pointer;
+}
+
+.list-group {
+    margin-top: 0;
+}
+
+.separator {
+    height: 1px;
+    background-color: #ccc; /* Adjust color as needed */
+    margin: 10px 0; /* Adjust margin as needed */
+    list-style: none; /* Remove bullet point */
+}
+
+.subscribtions {
+    font-weight: bold;
+}
+
+.you-more {
+    font-weight: bold;
+}
+
+.menuContainer {
+    overflow: hidden;
+    height: 0;
+    transition: height 1s ease-out; /* Slower transition */
+}
+
+.menuContainer.visible {
+    height: auto;
+    padding-top: 1rem; /* Adjust to match the layout */
+}
+
+#openMenu {
+    margin-top: 1rem; /* Adjust to match the layout */
+}
+
+#listRowDark {
+    color: white;
+}
+
+.left-menu-dark{
+    color: white;
+}

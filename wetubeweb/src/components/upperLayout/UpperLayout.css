@@ -1,0 +1,109 @@
+.upperSection {
+  display: flex;
+  align-items: center;
+}
+
+#addBtn {
+  margin-left: 10vh;
+  margin-bottom: 10px;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+#addBtnDark {
+  margin-left: 10vh;
+  margin-bottom: 10px;
+  padding: 0 !important;
+  border: 0 !important;
+  color: white;
+}
+
+#addBtn:hover {
+  text: Upload a video;
+}
+
+#notifBtn {
+  margin-left: 1vh;
+  margin-bottom: 10px;
+  padding: 0 !important;
+  border: 0 !important;
+} 
+ 
+#notifBtnDark {
+  margin-left: 1vh;
+  margin-bottom: 10px;
+  padding: 0 !important;
+  border: 0 !important;
+  color: white;
+}
+
+#profileBtn {
+  margin-left: 0.5vh;
+  margin-bottom: 10px;
+  font-size: x-large;
+  display: flex;
+  align-items: center; /* Align items in the center */
+ 
+}
+
+#profileBtnDark {
+  margin-left: 0.5vh;
+  margin-bottom: 10px;
+  font-size: x-large;
+  display: flex;
+  align-items: center; /* Align items in the center */
+  color: white ;
+}
+
+.custom-tooltip {
+  --bs-tooltip-bg: var(--bd-violet-bg);
+  --bs-tooltip-color: var(--bs-white);
+}
+
+#btnContainer {
+  display: flex;
+  align-items: center; /* Align items in the center */
+}
+
+.btnTxt {
+  font-size: medium;
+  margin-left: 0.5vh;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+
+
+.profile-picture {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  
+}
+
+.icon-text {
+  display: flex;
+  align-items: center;
+}
+
+.buttons{
+  display: flex;
+  margin-bottom: 2.5vh;
+
+}
+
+a:link, a:visited, a:hover, a:active {
+  text-decoration: none; 
+}
+
+.ifSignedIn {
+  display: flex;
+}
+
+#signOutIcon{
+  font-size: x-large; 
+  margin-top: 0.5vh;
+}
+
+
+

@@ -1,0 +1,67 @@
+
+video {
+    width: 65%;
+    height: auto;
+    margin-top: 3vh;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5vh;
+    margin-left: 2vh; 
+}
+
+.uploader {
+    margin-right: 10px;
+    font-size: 18px !important;
+    font-weight: bold;
+}
+
+.uploader-dark {
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: lightgray;
+}
+
+.subscribers-num{
+    font-size: 12px;
+    margin-left: 2vh;
+}
+
+.subscribers-num-dark{
+    font-size: 12px;
+    margin-left: 2vh;
+    color: white;
+}
+
+.video-title{
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.video-title-dark{
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+}
+
+#like-dislike{
+    margin-left: 50vh
+}
+
+#share-button{
+    margin-left: 5vh;
+}
+
+#liked{
+    background-color: #dc3545;
+    color: white
+};
+
+#disliked{
+    background-color: #dc3545 !important;
+    color: white !important
+};
+
