@@ -11,4 +11,12 @@
 
 .upper-navbar{
     margin-top: 1vh;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sort-selector {
+    max-width: 200px;
 }

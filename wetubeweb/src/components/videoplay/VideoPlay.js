@@ -3,11 +3,8 @@ import './VideoPlay.css';
 import { Tooltip } from "bootstrap";
 import { useNavigate } from 'react-router-dom';
 
-function VideoPlay({ id, allVideos, signedInUser, isDarkMode, deleteVideo }) {
-    const [like, setLike] = useState(false);
-    const [dislike, setDislike] = useState(false);
-    const thisVideo = allVideos.find(video => video.id === id);
-    const [countLikes, setCountLikes] = useState(thisVideo.likes);
+function VideoPlay({ video, signedInUser, isDarkMode, onToggleLike, onDeleteVideo }) {
+    const [isSubmittingLike, setIsSubmittingLike] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,82 +15,50 @@ function VideoPlay({ id, allVideos, signedInUser, isDarkMode, deleteVideo }) {
         };
     }, []);
 
-    const likeVideo = () => {
-        if (signedInUser) {
-            if (!like) {
-                setCountLikes(countLikes + 1);
-            } else {
-                setCountLikes(countLikes - 1);
-            }
-            if (dislike) {
-                setDislike(false);
-            }
-            setLike(!like);
-        } else {
-            alert('You need to be signed in to like!');
+    const likeVideo = async () => {
+        try {
+            setIsSubmittingLike(true);
+            await onToggleLike();
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setIsSubmittingLike(false);
         }
     };
 
-    const dislikeVideo = () => {
-        if (signedInUser) {
-            if (like) {
-                setCountLikes(countLikes - 1);
-                setLike(false);
-            }
-            setDislike(!dislike);
-        } else {
-            alert('You need to be signed in to dislike!');
-        }
-    };
-
-    const handleDelete = () => {
-        if (signedInUser) {
-            if (signedInUser.displayName === thisVideo.uploader) {
-                deleteVideo(thisVideo.id);
+    const handleDelete = async () => {
+        if (signedInUser && signedInUser.id === video.uploaderId) {
+            try {
+                await onDeleteVideo();
                 navigate('/');
-                return;
-            } else {
-                alert('You cant delete the video since you are not the uploader.')
+            } catch (error) {
+                alert(error.message);
             }
+            return;
         }
-        else {
-            alert('You cant delete the video since you are not the uploader.')
-        }
+
+        alert('You cant delete the video since you are not the uploader.');
     };
 
     return (
         <div className="video-play">
-            <video src={thisVideo.path} controls autoPlay muted>
-                <source src={thisVideo.path} type="video/mp4" />
+            <video src={video.videoUrl} controls autoPlay muted>
+                <source src={video.videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
-            <div className={isDarkMode ? "video-title-dark" : "video-title"}>{thisVideo.title}</div>
+            <div className={isDarkMode ? "video-title-dark" : "video-title"}>{video.title}</div>
             <div className="info-row">
-                <div className={isDarkMode ? "uploader-dark" : "uploader"}>{thisVideo.uploader}</div>
+                <div className={isDarkMode ? "uploader-dark" : "uploader"}>{video.uploaderName}</div>
                 <div className="btn-group" id="like-dislike" role="group" aria-label="Basic outlined example">
-                    {like ? (
-                        <button type="button" className="btn btn-outline-danger" onClick={likeVideo} id="liked">
-                            <i className="bi bi-hand-thumbs-up"> {countLikes}</i>
-                        </button>
-                    ) : (
-                        <button type="button" className="btn btn-outline-danger" onClick={likeVideo}>
-                            <i className="bi bi-hand-thumbs-up"> {countLikes}</i>
-                        </button>
-                    )}
-                    {dislike ? (
-                        <button type="button" className="btn btn-outline-danger" onClick={dislikeVideo} id="disliked">
-                            <i className="bi bi-hand-thumbs-down"></i>
-                        </button>
-                    ) : (
-                        <button type="button" className="btn btn-outline-danger" onClick={dislikeVideo}>
-                            <i className="bi bi-hand-thumbs-down"></i>
-                        </button>
-                    )}
+                    <button type="button" className="btn btn-outline-danger" onClick={likeVideo} id={video.likedByCurrentUser ? 'liked' : ''} disabled={isSubmittingLike}>
+                        <i className="bi bi-hand-thumbs-up"> {video.likesCount}</i>
+                    </button>
                 </div>
                 <button type="button" className="btn btn-outline-danger" id="share-button">Share</button>
                 <button type="button" className="btn btn-outline-danger" onClick={handleDelete} id="delete-button">Delete</button>
             </div>
             <div className={isDarkMode ? "subscribers-num-dark" : "subscribers-num"}>846K subscribers</div>
+            {video.description ? <p className="mt-3">{video.description}</p> : null}
         </div>
     );
 }

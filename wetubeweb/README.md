@@ -1,70 +1,103 @@
-# Getting Started with Create React App
+# WeTube Web (Advanced)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This app is now a full-stack project:
+- Frontend: React (Create React App)
+- Backend: Node.js + Express
+- Database: MongoDB (Mongoose)
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- User sign-up and sign-in with password hashing (`bcryptjs`)
+- JWT authentication (persistent session)
+- Video feed from MongoDB with:
+  - Search
+  - Category filtering
+  - Sort (latest, most viewed, most liked)
+- Video page with:
+  - Like/unlike persistence
+  - View counter persistence
+  - Comment create/delete persistence
+  - Owner-only video deletion
+- Upload page to publish new videos (URL-based media fields)
+- Initial automatic seeding from `src/videos.json` into MongoDB
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js 18+
+- MongoDB running locally or remotely
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup
 
-### `npm test`
+### 1. Install frontend dependencies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+### 2. Install backend dependencies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm --prefix server install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. Configure backend environment
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Copy `server/.env.example` to `server/.env` and set:
 
-### `npm run eject`
+```env
+PORT=5001
+MONGODB_URI=mongodb://127.0.0.1:27017/wetube
+JWT_SECRET=change-me-in-production
+CLIENT_ORIGIN=http://localhost:3000
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 4. Configure frontend environment (optional)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Copy `.env.example` to `.env` if you need a custom API URL:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```env
+REACT_APP_API_BASE_URL=http://localhost:5001/api
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Run
 
-## Learn More
+### Run both frontend + backend together
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm run dev
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Or run separately
 
-### Code Splitting
+Frontend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm start
+```
 
-### Analyzing the Bundle Size
+Backend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+npm run start:server
+```
 
-### Making a Progressive Web App
+## API Overview
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- `POST /api/auth/signup`
+- `POST /api/auth/signin`
+- `GET /api/auth/me`
+- `GET /api/videos`
+- `GET /api/videos/:id`
+- `POST /api/videos`
+- `DELETE /api/videos/:id`
+- `POST /api/videos/:id/view`
+- `POST /api/videos/:id/like`
+- `POST /api/videos/:id/comments`
+- `DELETE /api/videos/:id/comments/:commentId`
 
-### Advanced Configuration
+## Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Seed user credentials (only if DB starts empty):
+  - Username: `seed_user`
+  - Password: `SeedUser123`
+- For production, use HTTPS, stronger JWT secret management, and a real media upload storage flow (S3/Cloudinary).

@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from './logo.svg'; // Import your logo image
 import './signUpPage.css'; // Import your CSS file
+import { signUp } from '../api/client';
 
-function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
+function SignUpPage({ onAuthSuccess }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -15,11 +16,21 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const [usernameAvailable, setUsernameAvailable] = useState(true);
-  const [emailAvailable, setEmailAvailable] = useState(true);
+  const [availabilityError, setAvailabilityError] = useState('');
   const [passwordValid, setPasswordValid] = useState(true); // State to track password validity
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const fileInputRef = useRef(null); // Ref for file input
+
+  const fileToDataUrl = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,11 +40,11 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
 
     // Reset validation messages when typing in the respective fields
     if (name === 'username') {
-      setUsernameAvailable(true);
+      setAvailabilityError('');
     }
 
     if (name === 'email') {
-      setEmailAvailable(true);
+      setAvailabilityError('');
     }
 
     if (name === 'password' || name === 'confirmPassword') {
@@ -62,13 +73,12 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
     return passwordRegex.test(password);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Reset validation messages
     setPasswordsMatch(true);
-    setUsernameAvailable(true);
-    setEmailAvailable(true);
+    setAvailabilityError('');
     setPasswordValid(true);
 
     // Check if confirm password matches password
@@ -83,19 +93,6 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
       return;
     }
 
-    // Check if username already exists
-    if (signedUpUsers.some(user => user.username === formData.username)) {
-      setUsernameAvailable(false);
-      return;
-    }
-
-    // Check if email already exists
-    if (signedUpUsers.some(user => user.email === formData.email)) {
-      setEmailAvailable(false);
-      return;
-    }
-
-    // Check if all required fields are filled
     if (
       formData.username.trim() === '' ||
       formData.email.trim() === '' ||
@@ -108,37 +105,38 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
       return;
     }
 
-    // Create an object representing the user
-    const newUser = {
-      username: formData.username,
-      email: formData.email,
-      password: formData.password, // Note: You should not store passwords in plaintext in a real application
-      displayName: formData.displayName,
-      profilePicture: formData.profilePicture
-    };
+    setIsSubmitting(true);
 
-    // Save the user object
-    // You can save it in your backend or in local storage depending on your application's architecture
-    console.log('New user:', newUser);
+    try {
+      const profilePictureUrl = formData.profilePicture ? await fileToDataUrl(formData.profilePicture) : '';
+      const { token, user } = await signUp({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        displayName: formData.displayName,
+        profilePictureUrl,
+      });
 
-    // Update the list of signed-up user objects
-    setSignedUpUsers(prevUsers => [...prevUsers, newUser]);
+      onAuthSuccess(token, user);
+      setIsSuccess(true);
+      navigate('/');
 
-    // Show success message
-    setIsSuccess(true);
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        displayName: '',
+        profilePicture: null,
+      });
 
-    // Clear form data
-    setFormData({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      displayName: '',
-      profilePicture: null
-    });
-
-    // Reset file input field
-    fileInputRef.current.value = null;
+      fileInputRef.current.value = null;
+    } catch (error) {
+      setAvailabilityError(error.message);
+      setIsSuccess(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -151,25 +149,23 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
           <div className="input-group flex-nowrap">
             <input
               type="text"
-              className={`form-control ${!usernameAvailable ? 'error-outline' : ''}`}
+              className={`form-control ${availabilityError ? 'error-outline' : ''}`}
               placeholder="Username"
               name="username"
               value={formData.username}
               onChange={handleChange}
             />
-            {!usernameAvailable && <p className="error-message">Username not available. Please choose a different one.</p>}
           </div>
           {/* Email */}
           <div className="input-group flex-nowrap">
             <input
               type="email"
-              className={`form-control ${!emailAvailable ? 'error-outline' : ''}`}
+              className={`form-control ${availabilityError ? 'error-outline' : ''}`}
               placeholder="Email"
               name="email"
               value={formData.email}
               onChange={handleChange}
             />
-            {!emailAvailable && <p className="error-message">Email already in use. Please use a different one.</p>}
           </div>
           {/* Password */}
           <div className="input-group flex-nowrap">
@@ -215,8 +211,11 @@ function SignUpPage({ setSignedUpUsers, signedUpUsers }) {
               onChange={handleFileChange}
             />
           </div>
-          <button type="submit" className="btn btn-primary">Submit</button>
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating Account...' : 'Submit'}
+          </button>
         </form>
+        {availabilityError && <p className="error-message">{availabilityError}</p>}
         {isSuccess && <p className="success-message">Sign-up successful!</p>}
         <p className="signin-link">
           Already have an account? <Link to="/signin">Sign in</Link>

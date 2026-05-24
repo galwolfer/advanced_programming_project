@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './logo.svg'; 
 import './SignInPage.css'; 
+import { signIn } from '../api/client';
 
-function SignInPage({ signedUpUsers, setSignedInUser }) {
+function SignInPage({ onAuthSuccess }) {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
 
-  const [signInError, setSignInError] = useState(false);
+  const [signInError, setSignInError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,30 +22,26 @@ function SignInPage({ signedUpUsers, setSignedInUser }) {
     });
 
     // Reset signInError when user starts typing
-    setSignInError(false);
+    setSignInError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the entered username exists in the signed-up users
-    const user = signedUpUsers.find(user => user.username === formData.username);
+    setIsSubmitting(true);
 
-    if (user) {
-      // Check if the entered password matches the password for the username
-      if (user.password === formData.password) {
-        // Password matches, user is signed in
-        setSignedInUser(user); // Set the signed-in user
-        setSignInError(false);
-        alert('Signed in successfully!');
-        navigate(`/`); // Redirect to the home page
-      } else {
-        // Password does not match
-        setSignInError(true);
-      }
-    } else {
-      // Username does not exist
-      setSignInError(true);
+    try {
+      const { token, user } = await signIn({
+        username: formData.username,
+        password: formData.password,
+      });
+
+      onAuthSuccess(token, user);
+      navigate(`/`);
+    } catch (error) {
+      setSignInError(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -77,8 +75,10 @@ function SignInPage({ signedUpUsers, setSignedInUser }) {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary">Sign In</button>
-          {signInError && <p className="error-message">Invalid username or password. Please try again.</p>}
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing In...' : 'Sign In'}
+          </button>
+          {signInError && <p className="error-message">{signInError}</p>}
         </form>
         <p className="signup-link">
           Don't have an account? <Link to="/signup">Sign up</Link>

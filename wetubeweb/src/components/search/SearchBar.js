@@ -7,7 +7,7 @@ function SearchBar({ isDarkMode, setSearchQuery }) {
                 type="text" 
                 placeholder='Search...' 
                 className='searchBar' 
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery?.(e.target.value)}
             />           
         </>
     );

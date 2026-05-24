@@ -1,15 +1,25 @@
 import './HomeNavbar.css'
 
-function HomeNavbar() {
+function HomeNavbar({ categories, selectedCategory, setSelectedCategory, sortBy, setSortBy }) {
     return (
         <div className='upper-navbar'>
-            <button type="button" class="btn btn-info" id='button-categories-first'>Israel</button>
-            <button type="button" class="btn btn-info" id='button-categories'>Animals</button>
-            <button type="button" class="btn btn-info" id='button-categories'>Nature</button>
-            <button type="button" class="btn btn-info" id='button-categories'>Gaming</button>
-            <button type="button" class="btn btn-info" id='button-categories'>Computer science</button>
-            <button type="button" class="btn btn-info" id='button-categories'>Food</button>
-            <button type="button" class="btn btn-info" id='button-categories'>Clubbing</button>
+            {categories.map((category, index) => (
+                <button
+                    key={category}
+                    type="button"
+                    className="btn btn-info"
+                    id={index === 0 ? 'button-categories-first' : 'button-categories'}
+                    onClick={() => setSelectedCategory(category)}
+                    style={{ opacity: selectedCategory === category ? 1 : 0.7 }}
+                >
+                    {category}
+                </button>
+            ))}
+            <select className='form-select sort-selector ms-3' value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value='latest'>Latest</option>
+                <option value='popular'>Most Viewed</option>
+                <option value='liked'>Most Liked</option>
+            </select>
         </div>
     )
 }

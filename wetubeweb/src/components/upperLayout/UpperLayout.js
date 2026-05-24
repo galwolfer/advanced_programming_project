@@ -26,7 +26,7 @@ function UpperLayout({ user, setUser, isDarkMode, setSearchQuery }) {
     };
 
     const signOutFunc = () => {
-        setUser(null);
+        setUser();
         navigate('/');
     };
 
@@ -48,8 +48,8 @@ function UpperLayout({ user, setUser, isDarkMode, setSearchQuery }) {
                         <div className='ifSignedIn'>
                             <button type="button" className="btn text-nowrap profile-btn" id={isDarkMode ? "profileBtnDark" : "profileBtn"} data-bs-toggle="tooltip" data-bs-placement="top"
                                 data-bs-custom-class="custom-tooltip" data-bs-title="Your profile">
-                                {user.profilePicture ? (
-                                    <img src={URL.createObjectURL(user.profilePicture)} className="profile-picture" alt="Profile" />
+                                {user.profilePictureUrl ? (
+                                    <img src={user.profilePictureUrl} className="profile-picture" alt="Profile" />
                                 ) : (
                                     <i className="bi bi-person-circle"></i>
                                 )}
