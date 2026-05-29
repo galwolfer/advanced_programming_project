@@ -12,6 +12,14 @@ import SignInPage from '../signIn/SignInPage';
 import { useCallback, useEffect, useState } from 'react';
 import UploadPage from '../uploadVideo/UploadPage';
 import CommentSection from '../components/commentSection/CommentSection';
+import HistoryPage from '../history/HistoryPage';
+import LikedVideosPage from '../liked/LikedVideosPage';
+import SubscriptionsFeedPage from '../subscriptions/SubscriptionsFeedPage';
+import SearchResultsPage from '../search/SearchResultsPage';
+import VideoCardSkeleton from '../components/skeletons/VideoCardSkeleton';
+import VideoPageSkeleton from '../components/skeletons/VideoPageSkeleton';
+import RelatedVideos from '../components/relatedVideos/RelatedVideos';
+import ErrorBoundary from '../components/errorBoundary/ErrorBoundary';
 import {
   addComment,
   deleteComment,
@@ -39,6 +47,10 @@ function MainLayout({
   loading,
   loadError,
   setSearchQuery,
+  onLoadMore,
+  hasMore,
+  totalVideos,
+  isLoadingMore,
 }) {
 
   function toggleMode() {
@@ -48,13 +60,13 @@ function MainLayout({
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-2">
+        <div className="col-lg-2 col-md-3 d-none d-md-block sidebar-container">
           <div className='appName'></div>
           <img src={icon} className='appIcon' alt='WeTube logo' />
-          <LeftMenu isDarkMode={isDarkMode} />
+          <LeftMenu isDarkMode={isDarkMode} signedInUser={signedInUser} />
         </div>
-        <div className="col-10">
-          <button type="button" className="btn btn-dark" id='darkModeButton' onClick={toggleMode}>Dark mode</button>
+        <div className="col-lg-10 col-md-9 col-sm-12 main-content-container position-relative">
+          <button type="button" className="btn btn-secondary btn-sm" id='darkModeButton' onClick={toggleMode}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button>
           <UpperLayout user={signedInUser} setUser={setUser} isDarkMode={isDarkMode} setSearchQuery={setSearchQuery} />
           <HomeNavbar
             categories={categories}
@@ -64,7 +76,20 @@ function MainLayout({
             setSortBy={setSortBy}
           />
           {loadError ? <div className="alert alert-danger mt-3">{loadError}</div> : null}
-          {loading ? <div className="mt-4">Loading videos...</div> : <VideoFeed videos={videos} isDarkMode={isDarkMode} />}
+          {loading ? (
+            <div className="row mt-4">
+               {Array.from({ length: 8 }).map((_, i) => <VideoCardSkeleton key={i} />)}
+            </div>
+          ) : (
+            <VideoFeed 
+              videos={videos} 
+              isDarkMode={isDarkMode} 
+              onLoadMore={onLoadMore}
+              hasMore={hasMore}
+              totalVideos={totalVideos}
+              isLoadingMore={isLoadingMore}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -154,34 +179,43 @@ function VideoPageLayout({ signedInUser, token, setUser, isDarkMode, setDarkMode
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-2">
+        <div className="col-lg-2 col-md-3 d-none d-md-block sidebar-container">
           <img src={icon} className='appIcon' alt='WeTube logo' />
           <SpecialLeftMenu isDarkMode={isDarkMode} />
         </div>
-        <div className="col-10">
-        <button type="button" className="btn btn-dark" id='darkModeButton' onClick={toggleMode} >Dark mode</button>
+        <div className="col-lg-10 col-md-9 col-sm-12 main-content-container position-relative">
+        <button type="button" className="btn btn-secondary btn-sm" id='darkModeButton' onClick={toggleMode} >{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button>
           <UpperLayout user={signedInUser} setUser={setUser} isDarkMode={isDarkMode} />
           {pageError ? <div className="alert alert-danger mt-3">{pageError}</div> : null}
-          {loading || !video ? (
-            <div className="mt-3">Loading video...</div>
-          ) : (
-            <>
-              <VideoPlay
-                video={video}
-                signedInUser={signedInUser}
-                isDarkMode={isDarkMode}
-                onToggleLike={onToggleLike}
-                onDeleteVideo={onDeleteVideo}
-              />
-              <CommentSection
-                signedInUser={signedInUser}
-                comments={comments}
-                isDarkMode={isDarkMode}
-                onAddComment={onAddComment}
-                onDeleteComment={onDeleteComment}
-              />
-            </>
-          )}
+          
+          <div className="row mt-3">
+            <div className="col-lg-8 col-12">
+              {loading || !video ? (
+                <VideoPageSkeleton />
+              ) : (
+                <>
+                  <VideoPlay
+                    video={video}
+                    signedInUser={signedInUser}
+                    isDarkMode={isDarkMode}
+                    onToggleLike={onToggleLike}
+                    onDeleteVideo={onDeleteVideo}
+                    token={token}
+                  />
+                  <CommentSection
+                    signedInUser={signedInUser}
+                    comments={comments}
+                    isDarkMode={isDarkMode}
+                    onAddComment={onAddComment}
+                    onDeleteComment={onDeleteComment}
+                  />
+                </>
+              )}
+            </div>
+            <div className="col-lg-4 col-12">
+               {video && <RelatedVideos videoId={video.id} isDarkMode={isDarkMode} />}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -197,8 +231,15 @@ function App() {
   const [sortBy, setSortBy] = useState('latest');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setDarkMode] = useState(false);
+  
+  // Pagination states
   const [loadingVideos, setLoadingVideos] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [videosError, setVideosError] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalVideos, setTotalVideos] = useState(0);
+  const limit = 20;
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
@@ -234,32 +275,57 @@ function App() {
     };
   }, [token]);
 
-  const loadVideos = useCallback(async () => {
-    setLoadingVideos(true);
-    setVideosError('');
+  const loadVideos = useCallback(async (pageNum = 1, append = false) => {
+    if (append) {
+      setIsLoadingMore(true);
+    } else {
+      setLoadingVideos(true);
+      setVideosError('');
+    }
 
     try {
-      const { videos: loadedVideos, categories: loadedCategories } = await fetchVideos(
+      const result = await fetchVideos(
         {
           search: searchQuery,
           category: selectedCategory,
           sort: sortBy,
+          page: pageNum,
+          limit,
         },
         token
       );
 
-      setVideos(loadedVideos);
+      const loadedVideos = result.videos || [];
+      const loadedCategories = result.categories || ['All'];
+      const loadedTotalPages = result.totalPages || 1;
+      const loadedTotalVideos = result.totalVideos || loadedVideos.length;
+
+      setVideos(prev => append ? [...prev, ...loadedVideos] : loadedVideos);
       setCategories(loadedCategories);
+      setPage(pageNum);
+      setTotalPages(loadedTotalPages);
+      setTotalVideos(loadedTotalVideos);
     } catch (error) {
       setVideosError(error.message);
     } finally {
-      setLoadingVideos(false);
+      if (append) {
+        setIsLoadingMore(false);
+      } else {
+        setLoadingVideos(false);
+      }
     }
   }, [searchQuery, selectedCategory, sortBy, token]);
 
+  // Initial load or when filters change
   useEffect(() => {
-    loadVideos();
+    loadVideos(1, false);
   }, [loadVideos]);
+
+  const handleLoadMore = () => {
+    if (page < totalPages) {
+      loadVideos(page + 1, true);
+    }
+  };
 
   const setAuthSession = (nextToken, user) => {
     localStorage.setItem(AUTH_TOKEN_KEY, nextToken);
@@ -284,16 +350,22 @@ function App() {
       <Route path="/signup" element={<SignUpPage onAuthSuccess={setAuthSession} />} />
       <Route path="/signin" element={<SignInPage onAuthSuccess={setAuthSession} />} />
       <Route path="/upload" element={<UploadPage token={token} user={signedInUser} onUploadSuccess={loadVideos} />} />
+      <Route path="/history" element={<HistoryPage signedInUser={signedInUser} token={token} setUser={signOut} isDarkMode={isDarkMode} setDarkMode={setDarkMode} setSearchQuery={setSearchQuery} />} />
+      <Route path="/liked" element={<LikedVideosPage signedInUser={signedInUser} token={token} setUser={signOut} isDarkMode={isDarkMode} setDarkMode={setDarkMode} setSearchQuery={setSearchQuery} />} />
+      <Route path="/feed/subscriptions" element={<SubscriptionsFeedPage signedInUser={signedInUser} token={token} setUser={signOut} isDarkMode={isDarkMode} setDarkMode={setDarkMode} setSearchQuery={setSearchQuery} />} />
+      <Route path="/search" element={<SearchResultsPage signedInUser={signedInUser} token={token} setUser={signOut} isDarkMode={isDarkMode} setDarkMode={setDarkMode} setSearchQuery={setSearchQuery} />} />
     </Routes>
   );
 }
 
 export default function AppWrapper() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/*" element={<App />} />
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          <Route path="/*" element={<App />} />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 }

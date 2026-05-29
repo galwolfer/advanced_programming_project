@@ -1,0 +1,23 @@
+.playlist-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.playlist-video-item {
+  transition: background-color 0.2s;
+  border-radius: 8px !important;
+  margin-bottom: 8px;
+}
+
+.playlist-video-item:hover {
+  background-color: #f8f9fa;
+}
+
+body.dark-mode .playlist-video-item:hover {
+  background-color: #333 !important;
+}
+
+.min-width-0 {
+  min-width: 0;
+}

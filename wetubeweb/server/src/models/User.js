@@ -32,6 +32,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    description: {
+      type: String,
+      default: "",
+    },
+    bannerUrl: {
+      type: String,
+      default: "",
+    },
+    subscribersCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

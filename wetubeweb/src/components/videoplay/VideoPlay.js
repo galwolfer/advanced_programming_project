@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import './VideoPlay.css';
 import { Tooltip } from "bootstrap";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import AddToPlaylistModal from "../addToPlaylist/AddToPlaylistModal";
+import SubscribeButton from "../subscribeButton/SubscribeButton";
 
-function VideoPlay({ video, signedInUser, isDarkMode, onToggleLike, onDeleteVideo }) {
+function VideoPlay({ video, signedInUser, isDarkMode, onToggleLike, onDeleteVideo, token }) {
     const [isSubmittingLike, setIsSubmittingLike] = useState(false);
+    const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -48,17 +51,31 @@ function VideoPlay({ video, signedInUser, isDarkMode, onToggleLike, onDeleteVide
             </video>
             <div className={isDarkMode ? "video-title-dark" : "video-title"}>{video.title}</div>
             <div className="info-row">
-                <div className={isDarkMode ? "uploader-dark" : "uploader"}>{video.uploaderName}</div>
+                <Link to={`/channel/${video.uploaderId}`} className={isDarkMode ? "uploader-dark" : "uploader"}>{video.uploaderName}</Link>
+                <SubscribeButton channelId={video.uploaderId} signedInUser={signedInUser} token={token} isDarkMode={isDarkMode} />
                 <div className="btn-group" id="like-dislike" role="group" aria-label="Basic outlined example">
                     <button type="button" className="btn btn-outline-danger" onClick={likeVideo} id={video.likedByCurrentUser ? 'liked' : ''} disabled={isSubmittingLike}>
                         <i className="bi bi-hand-thumbs-up"> {video.likesCount}</i>
                     </button>
                 </div>
                 <button type="button" className="btn btn-outline-danger" id="share-button">Share</button>
+                {signedInUser && (
+                    <button type="button" className="btn btn-outline-danger" id="save-button" onClick={() => setShowPlaylistModal(true)}>
+                        <i className="bi bi-plus-circle"></i> Save
+                    </button>
+                )}
                 <button type="button" className="btn btn-outline-danger" onClick={handleDelete} id="delete-button">Delete</button>
             </div>
-            <div className={isDarkMode ? "subscribers-num-dark" : "subscribers-num"}>846K subscribers</div>
             {video.description ? <p className="mt-3">{video.description}</p> : null}
+
+            {signedInUser && (
+                <AddToPlaylistModal 
+                    show={showPlaylistModal} 
+                    onHide={() => setShowPlaylistModal(false)} 
+                    videoId={video.id} 
+                    token={token} 
+                />
+            )}
         </div>
     );
 }

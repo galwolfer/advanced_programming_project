@@ -1,0 +1,58 @@
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-dialog-custom {
+  width: 100%;
+  max-width: 320px;
+  background: white;
+  border-radius: 8px;
+}
+
+body.dark-mode .modal-dialog-custom {
+  background: #282828;
+  color: white;
+}
+
+body.dark-mode .modal-content {
+  background-color: transparent;
+  border: none;
+}
+
+body.dark-mode .btn-close {
+  filter: invert(1);
+}
+
+body.dark-mode .form-control {
+  background-color: #282828;
+  color: white;
+  border-color: #555;
+}
+
+body.dark-mode .form-control:focus {
+  background-color: #282828;
+  color: white;
+  border-color: white;
+}
+
+body.dark-mode .btn-link.text-dark {
+  color: white !important;
+}
+
+.playlist-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.form-check-label {
+  cursor: pointer;
+}

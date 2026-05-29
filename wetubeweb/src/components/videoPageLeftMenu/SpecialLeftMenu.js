@@ -24,10 +24,12 @@ function VpLeftMenu({isDarkMode}) {
                             Shorts
                             <i className="bi bi-file-earmark-play"></i>
                         </li>
+                        <Link to='/subscriptions'>
                         <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
-                            Subscribtions
+                            Subscriptions
                             <i className="bi bi-people-fill"></i>
                         </li>
+                        </Link>
                         <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
                             You
                             <i className="bi bi-person-video2"></i>
@@ -36,26 +38,24 @@ function VpLeftMenu({isDarkMode}) {
                     <li className="separator"></li>
                     <div className='you-more'>You {'>'}</div>
                     <ul className="list-group" id='more-menu'>
-                        <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
-                            Your channel
-                            <i className="bi bi-person-video"></i>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
-                            History
-                            <i className="bi bi-clock-history"></i>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
-                            Playlists
-                            <i className="bi bi-play-btn"></i>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center"id={isDarkMode ? "listRowDark" : "listRow"}>
-                            Your videos
-                            <i className="bi bi-camera-reels"></i>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
-                            Liked videos
-                            <i className="bi bi-hand-thumbs-up"></i>
-                        </li>
+                    <Link to='/history'>
+                    <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
+                        History
+                        <i className="bi bi-clock-history"></i>
+                    </li>
+                    </Link>
+                    <Link to='/playlists'>
+                    <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
+                        Playlists
+                        <i className="bi bi-play-btn"></i>
+                    </li>
+                    </Link>
+                    <Link to='/liked'>
+                    <li className="list-group-item d-flex justify-content-between align-items-center" id={isDarkMode ? "listRowDark" : "listRow"}>
+                        Liked videos
+                        <i className="bi bi-hand-thumbs-up"></i>
+                    </li>
+                    </Link>
                     </ul>
                     <li className="separator"></li>
                     <ul className="list-group" id='subs'>

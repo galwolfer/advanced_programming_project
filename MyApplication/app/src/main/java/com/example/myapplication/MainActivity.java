@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -14,185 +15,217 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.adapters.PostListAdapter;
+import com.example.myapplication.api.ApiClient;
+import com.example.myapplication.api.ApiModels;
+import com.example.myapplication.api.ApiService;
 import com.example.myapplication.entitie.Post;
 import com.example.myapplication.entitie.User;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
- * MainActivity displays a list of posts in a RecyclerView, allows searching posts,
- * and handles user interactions like adding posts, logging in/out, and changing dark mode.
+ * MainActivity displays a video feed from the Express API in a RecyclerView,
+ * allows searching, and handles user interactions like adding videos,
+ * logging in/out, and dark mode.
  */
 public class MainActivity extends BaseActivity implements OnPostClickListener {
 
-    // Instance variables
-    private List<Post> postList;         // List of posts to display
-    private RecyclerView recyclerView;  // RecyclerView to show posts
-    private PostListAdapter postAdapter; // Adapter for RecyclerView
-    private EditText searchEditText;     // EditText for search input
-    private ImageButton searchButton;    // Button to perform search
+    private List<Post> postList;
+    private RecyclerView recyclerView;
+    private PostListAdapter postAdapter;
+    private EditText searchEditText;
+    private ImageButton searchButton;
 
-    private static final int ADD_POST_REQUEST = 3; // Request code for adding a new post
+    private final Map<UUID, String> serverIdMap = new HashMap<>();
+
+    private static final int ADD_POST_REQUEST = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize RecyclerView and its adapter
-        postList = postListManager.getPosts();
+        postList = new ArrayList<>();
         recyclerView = findViewById(R.id.postList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         postAdapter = new PostListAdapter(this, postList, this);
         recyclerView.setAdapter(postAdapter);
 
-        // Check if the admin user exists; add only if it doesn't
-        if (!usersManager.userExists("admin")) {
-            usersManager.addUser(new User("Admin", "admin", null, "12345678aA"));
-        }
-
-        // Set up user information display
         setUserInfoFeed();
 
-        // Set up search functionality
         searchEditText = findViewById(R.id.searchEditText);
         searchButton = findViewById(R.id.buttonSearch);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Perform search based on entered text
-                String searchText = searchEditText.getText().toString().trim();
-                PostListManager postManager = postListManager.getInstance(MainActivity.this);
-
-                if (!searchText.isEmpty()) {
-                    List<Post> searchResults = postManager.searchPosts(searchText);
-                    if (searchResults == null) {
-                        // No results found, show all posts
-                        List<Post> allPosts = postManager.getPosts();
-                        postAdapter.updatePosts(allPosts);
-                    } else {
-                        // Update RecyclerView with search results
-                        postAdapter.updatePosts(searchResults);
-                    }
-                } else {
-                    // Empty search text, show all posts
-                    List<Post> allPosts = postManager.getPosts();
-                    postAdapter.updatePosts(allPosts);
-                }
+        searchButton.setOnClickListener(v -> {
+            String query = searchEditText.getText().toString().trim();
+            if (!query.isEmpty()) {
+                searchVideos(query);
+            } else {
+                loadVideos();
             }
         });
+
+        loadVideos();
     }
 
-    /**
-     * Updates the user information displayed in the UI based on whether a user is signed in.
-     * If signed in, displays the user's display name and profile picture.
-     * If not signed in, displays a default profile picture.
-     */
-    private void setUserInfoFeed() {
-        if (usersManager.getSignedInUser() != null) {
-            // Set user's display name
-            TextView activeUserInfo = findViewById(R.id.activeUserInfo);
-            String displayName = usersManager.getSignedInUser().getDisplayName();
-            activeUserInfo.setText(displayName);
+    private void loadVideos() {
+        ApiClient.getClient().create(ApiService.class)
+                .getVideos(null, null, "latest", 1, 50)
+                .enqueue(new Callback<ApiModels.VideoListResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiModels.VideoListResponse> call,
+                                           Response<ApiModels.VideoListResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<ApiModels.VideoResponse> videos = response.body().videos;
+                            if (videos != null) {
+                                buildPostList(videos);
+                            }
+                        }
+                    }
 
-            // Set user's profile picture
-            ImageView activeUserPic = findViewById(R.id.activeUserPic);
-            Uri profilePicUri = usersManager.getSignedInUser().getProfilePicture();
-            if (profilePicUri != null) {
-                activeUserPic.setImageURI(profilePicUri);
-            } else {
-                activeUserPic.setImageResource(R.drawable.default_profile_pic);
+                    @Override
+                    public void onFailure(Call<ApiModels.VideoListResponse> call, Throwable t) {
+                        Toast.makeText(MainActivity.this,
+                                "Failed to load videos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void searchVideos(String query) {
+        ApiClient.getClient().create(ApiService.class)
+                .getVideos(query, null, "latest", 1, 50)
+                .enqueue(new Callback<ApiModels.VideoListResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiModels.VideoListResponse> call,
+                                           Response<ApiModels.VideoListResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<ApiModels.VideoResponse> videos = response.body().videos;
+                            if (videos != null) {
+                                buildPostList(videos);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiModels.VideoListResponse> call, Throwable t) {
+                        Toast.makeText(MainActivity.this,
+                                "Search failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void buildPostList(List<ApiModels.VideoResponse> videos) {
+        final List<Post> posts = new ArrayList<>();
+        serverIdMap.clear();
+
+        for (ApiModels.VideoResponse v : videos) {
+            String displayName = v.uploaderName != null ? v.uploaderName : "Unknown";
+            String userName = v.uploaderName != null ? v.uploaderName : "unknown";
+            User author = new User(displayName, userName, null, "");
+            String title = v.title != null ? v.title : (v.description != null ? v.description : "");
+            Post post = new Post(title, null, v.videoUrl, author);
+            posts.add(post);
+            serverIdMap.put(post.getId(), v.id);
+        }
+
+        postAdapter.setPosts(posts);
+
+        // Load thumbnails in background
+        new Thread(() -> {
+            for (int i = 0; i < posts.size(); i++) {
+                ApiModels.VideoResponse v = videos.get(i);
+                Post post = posts.get(i);
+                if (v.thumbnailUrl != null && !v.thumbnailUrl.isEmpty()) {
+                    Bitmap thumb = ImageLoader.loadBitmap(v.thumbnailUrl);
+                    if (thumb != null) {
+                        post.setImageBit(thumb);
+                    }
+                }
+            }
+            runOnUiThread(() -> postAdapter.notifyDataSetChanged());
+        }).start();
+    }
+
+    private void setUserInfoFeed() {
+        TextView activeUserInfo = findViewById(R.id.activeUserInfo);
+        ImageView activeUserPic = findViewById(R.id.activeUserPic);
+
+        if (tokenManager.isSignedIn()) {
+            String displayName = tokenManager.getDisplayName();
+            activeUserInfo.setText(displayName != null ? displayName : "");
+
+            String picUrl = tokenManager.getProfilePicUrl();
+            if (picUrl != null && !picUrl.isEmpty()) {
+                new Thread(() -> {
+                    Bitmap bmp = ImageLoader.loadBitmap(picUrl);
+                    if (bmp != null) {
+                        runOnUiThread(() -> activeUserPic.setImageBitmap(bmp));
+                    }
+                }).start();
             }
         } else {
-            // No signed-in user, display default profile picture
-            ImageView activeUserPic = findViewById(R.id.activeUserPic);
+            activeUserInfo.setText("");
             activeUserPic.setImageResource(R.drawable.default_profile_pic);
         }
     }
 
-    /**
-     * Handles the click on the dark mode switch.
-     * Toggles the app's dark mode based on the current state of the switch.
-     */
     public void changeDarkModClick(View view) {
         changeDarkMode();
     }
 
-    /**
-     * Logs out the current user by signing them out and returning to the MainActivity.
-     * Displays a message if no user is currently signed in.
-     */
     public void logout(View view) {
-        if (usersManager.getSignedInUser() != null) {
-            // Sign out the current user
-            usersManager.signOut();
+        if (tokenManager.isSignedIn()) {
+            tokenManager.clearSession();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         } else {
-            // No signed-in user, display a toast message
             Toast.makeText(this, "No signed-in user", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * Redirects the user to the SignInActivity to log in if not already signed in.
-     * Displays a message if a user is already signed in.
-     */
     public void login(View view) {
-        if (usersManager.getSignedInUser() == null) {
-            // Start SignInActivity for logging in
+        if (!tokenManager.isSignedIn()) {
             Intent intent = new Intent(this, SignInActivity.class);
             startActivity(intent);
             finish();
         } else {
-            // User is already signed in, display a toast message
             Toast.makeText(this, "Already signed in!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * Redirects the user to the AddPostActivity to add a new post if signed in.
-     * Displays a message prompting the user to sign in if not already signed in.
-     */
     public void addItem(View view) {
-        if (usersManager.getSignedInUser() != null) {
-            // Start AddPostActivity for adding a new post
+        if (tokenManager.isSignedIn()) {
             Intent intent = new Intent(this, AddPostActivity.class);
             startActivityForResult(intent, ADD_POST_REQUEST);
         } else {
-            // User not signed in, display a toast message
             Toast.makeText(this, "Please sign in to upload a new video.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * Handles the click on a post item in the RecyclerView.
-     * Opens the VideoActivity to view the selected post's video.
-     *
-     * @param post The post object that was clicked
-     */
     @Override
     public void onPostClick(Post post) {
         Intent intent = new Intent(this, VideoActivity.class);
         intent.putExtra("id", post.getId());
+        String serverId = serverIdMap.get(post.getId());
+        if (serverId != null) {
+            intent.putExtra("serverVideoId", serverId);
+        }
         startActivity(intent);
     }
 
-    /**
-     * Handles the result returned from AddPostActivity after adding a new post.
-     * Refreshes the post list displayed in the RecyclerView.
-     *
-     * @param requestCode The request code passed to AddPostActivity
-     * @param resultCode  The result code returned from AddPostActivity
-     * @param data        The data returned from AddPostActivity
-     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == ADD_POST_REQUEST) {
-            // Refresh the post list in the RecyclerView
-            postAdapter.notifyDataSetChanged();
+            loadVideos();
         }
     }
 }
